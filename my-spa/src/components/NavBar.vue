@@ -2,10 +2,10 @@
     <nav class="flex items-center justify-between p-4 bg-white dark:bg-gray-800 shadow">
     <div class="flex items-center space-x-2">
        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 64 64" fill="none">
-    <!-- Circle background -->
+    
     <circle cx="32" cy="32" r="32" class="fill-white dark:fill-gray-900"/>
     
-    <!-- Wave shape -->
+    
     <path 
       d="M16 40c8-12 24-12 32 0" 
       stroke="gold" 
@@ -13,7 +13,7 @@
       stroke-linecap="round"
     />
     
-    <!-- Letter i -->
+    
     <line x1="32" y1="16" x2="32" y2="32" stroke="gold" stroke-width="4" stroke-linecap="round"/>
     <circle cx="32" cy="12" r="2" fill="gold"/>
   </svg>
@@ -63,17 +63,17 @@ import { ref, watchEffect } from 'vue'
 import { MoonIcon, SunIcon } from '@heroicons/vue/24/solid'
 
 
-// Dark mode theme state
+
 const theme = ref(localStorage.getItem('theme') || 'light')
 
-// Apply theme to document root
+
 watchEffect(() => {
   document.documentElement.classList.remove(theme.value === 'light' ? 'dark' : 'light')
   document.documentElement.classList.add(theme.value)
   localStorage.setItem('theme', theme.value)
 })
 
-// Toggle dark/light mode
+
 function toggleTheme() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'
 }
