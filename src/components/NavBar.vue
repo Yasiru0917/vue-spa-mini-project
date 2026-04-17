@@ -26,14 +26,15 @@
    <div class="flex items-center space-x-4">
     
        <button
-  @click="goToLogin"
-  class="px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold shadow-lg hover:from-blue-600 hover:to-blue-700 hover:scale-105 transition transform duration-200"
+           @click="goToLogin"
+          class="px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold shadow-lg hover:from-blue-600 hover:to-blue-700 hover:scale-105 transition transform duration-200"
 >
-  Login
-</button>
+            Login
+      </button>
 
       
         <button
+           @click="emit('open-cart')"
             class="relative p-3 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 text-gray-900 dark:text-gray-100 shadow-md hover:shadow-lg hover:scale-105 transition transform duration-200"
 >
   
@@ -41,12 +42,12 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 7h13l-1.5-7M7 13h10" />
             </svg>
 
- 
+          
             <span
-             class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-         >
-            0
-            </span>
+               class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+>
+               {{ cart.itemCount }}
+              </span>
         </button>
      
         <button
@@ -63,23 +64,24 @@
 import { ref, watchEffect } from 'vue'
 import { MoonIcon, SunIcon } from '@heroicons/vue/24/solid'
 import { useRouter } from 'vue-router'
+import { useCartStore } from '../store/cartStore'
 
+const emit = defineEmits(['open-cart'])  // 🔥 REQUIRED
+
+const cart = useCartStore()
 const router = useRouter()
 
 function goToLogin() {
   router.push('/login')
 }
 
-
 const theme = ref(localStorage.getItem('theme') || 'light')
 
-
 watchEffect(() => {
-  document.documentElement.classList.remove(theme.value === 'light' ? 'dark' : 'light')
+  document.documentElement.classList.remove('light', 'dark')
   document.documentElement.classList.add(theme.value)
   localStorage.setItem('theme', theme.value)
 })
-
 
 function toggleTheme() {
   theme.value = theme.value === 'light' ? 'dark' : 'light'

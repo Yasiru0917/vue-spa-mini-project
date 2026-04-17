@@ -1,14 +1,34 @@
 <template>
-  <div class="max-w-6xl mx-auto mt-10 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  <div
+    class="max-w-6xl mx-auto mt-10 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+  >
     <div
       v-for="product in products"
       :key="product.id"
       class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col items-center transform hover:scale-105 transition duration-200"
     >
-      <img :src="product.image" :alt="product.name" class="w-32 h-32 object-contain mb-4" />
-      <h2 class="text-lg font-semibold mb-2">{{ product.name }}</h2>
-      <p class="text-gray-700 dark:text-gray-300 mb-4">LKR {{ product.price.toLocaleString() }}</p>
-      <button class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600">
+      <!-- Image -->
+      <img
+        :src="product.image"
+        :alt="product.name"
+        class="w-32 h-32 object-contain mb-4"
+      />
+
+      <!-- Name -->
+      <h2 class="text-lg font-semibold mb-2 text-center">
+        {{ product.name }}
+      </h2>
+
+      <!-- Price -->
+      <p class="text-gray-700 dark:text-gray-300 mb-4">
+        LKR {{ product.price.toLocaleString() }}
+      </p>
+
+      <!-- Button -->
+      <button
+        @click="addToCart(product)"
+        class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition"
+      >
         Add to Cart
       </button>
     </div>
@@ -16,6 +36,9 @@
 </template>
 
 <script setup lang="ts">
+import { useCartStore } from '../store/cartStore'
+
+// Images
 import iPhone17ProMax from '../assets/17 pro max.jpg'
 import iPhone17Pro from '../assets/17 pro.jpg'
 import iPhone17 from '../assets/17.jpg'
@@ -29,6 +52,7 @@ import iPhone14ProMax from '../assets/14 pro max.jpg'
 import iPhone14 from '../assets/14.jpg'
 import iPhone13ProMax from '../assets/13promax.jpg'
 
+// Type
 interface Product {
   id: number
   name: string
@@ -36,8 +60,16 @@ interface Product {
   image: string
 }
 
+// ✅ Pinia store
+const cart = useCartStore()
+
+// ✅ Add to cart function
+function addToCart(product: Product) {
+  cart.addToCart(product)
+}
+
+// Product list
 const products: Product[] = [
-  
   { id: 1, name: 'iPhone 17 Pro Max', price: 650000, image: iPhone17ProMax },
   { id: 2, name: 'iPhone 17 Pro', price: 590000, image: iPhone17Pro },
   { id: 3, name: 'iPhone 17', price: 520000, image: iPhone17 },
