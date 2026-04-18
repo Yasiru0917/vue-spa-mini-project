@@ -100,19 +100,7 @@ import FilterBar from '../components/FilterBar.vue'
 import ProductModal from '../components/ProductModal.vue'
 import { products } from '../services/api'
 
-// Images
-import iPhone17ProMax from '../assets/17 pro max.jpg'
-import iPhone17Pro from '../assets/17 pro.jpg'
-import iPhone17 from '../assets/17.jpg'
-import iPhone16ProMax from '../assets/16 pro max.png'
-import iPhone16Pro from '../assets/16 pro.jpg'
-import iPhone16 from '../assets/16.jpg'
-import iPhone15ProMax from '../assets/15 pro max.jpg'
-import iPhone15Pro from '../assets/15 pro.jpg'
-import iPhone15 from '../assets/15.jpg'
-import iPhone14ProMax from '../assets/14 pro max.jpg'
-import iPhone14 from '../assets/14.jpg'
-import iPhone13ProMax from '../assets/13promax.jpg'
+
 
 
 

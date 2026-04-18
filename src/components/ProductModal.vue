@@ -1,77 +1,92 @@
 <template>
-  <div
-    v-if="isOpen"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-  >
-    <div class="bg-white dark:bg-gray-800 rounded-xl p-6 w-96 relative">
+  <div v-if="isOpen" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
 
-      <!-- Close Button -->
-      <button
-        @click="close"
-        class="absolute top-2 right-2 text-gray-500 hover:text-red-500"
-      >
-        ✖
-      </button>
+    <div class="bg-white dark:bg-gray-900 w-[92%] max-w-3xl rounded-2xl overflow-hidden shadow-xl">
 
-      <!-- Image -->
-      <img
-        :src="product.image"
-        :alt="product.name"
-        class="w-48 h-48 object-contain mx-auto mb-4"
-      />
+      <!-- HEADER -->
+      <div class="p-5 border-b dark:border-gray-800 flex justify-between items-center">
+        <h2 class="text-lg font-bold text-gray-800 dark:text-white">
+          {{ product.name }}
+        </h2>
 
-      <!-- Name -->
-      <h2 class="text-xl font-bold text-center text-gray-900 dark:text-white">
-        {{ product.name }}
-      </h2>
+        <button @click="$emit('close')" class="text-gray-500 hover:text-red-500 text-xl">
+          ✕
+        </button>
+      </div>
 
-      <!-- Price -->
-      <p class="text-center text-gray-600 dark:text-gray-300 mt-2">
-        LKR {{ product.price.toLocaleString() }}
-      </p>
+      <!-- BODY -->
+      <div class="p-6 grid md:grid-cols-2 gap-6">
 
-      <!-- Add to Cart -->
-      <button
-        @click="addToCart"
-        class="mt-4 w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-      >
-        Add to Cart
-      </button>
+        <!-- IMAGE -->
+        <div class="flex justify-center items-center">
+          <img :src="product.image" class="w-56 h-56 object-contain" />
+        </div>
+
+        <!-- DETAILS -->
+         
+        <div>
+
+          <!-- PRICE -->
+          <p class="text-2xl font-bold text-[#81A6C6]">
+            Rs {{ product.price.toLocaleString() }}
+          </p>
+          <!-- COLORS (DISPLAY ONLY) -->
+<div v-if="product.colors && product.colors.length" class="mt-4">
+  <p class="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+    Available Colors
+  </p>
+
+  <div class="flex gap-3">
+    <div
+      v-for="(color, index) in product.colors"
+      :key="index"
+      class="w-8 h-8 rounded-full border border-gray-300"
+      :style="{ backgroundColor: color }"
+    ></div>
+  </div>
+</div>
+
+          <!-- HIGHIGHTS -->
+          <div v-if="product.highlights" class="mt-4">
+            <p class="font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Highlights
+            </p>
+
+            <ul class="list-disc ml-5 text-sm text-gray-600 dark:text-gray-400">
+              <li v-for="(item, i) in product.highlights" :key="i">
+                {{ item }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- SPECS -->
+          <div class="mt-4 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+
+            <p><span class="font-semibold">Camera:</span> {{ product.camera }}</p>
+            <p><span class="font-semibold">Performance:</span> {{ product.performance }}</p>
+            <p><span class="font-semibold">Battery:</span> {{ product.battery }}</p>
+            <p><span class="font-semibold">Design:</span> {{ product.design }}</p>
+
+          </div>
+
+          
+
+        </div>
+
+      </div>
 
     </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { useCartStore } from '../store/cartStore'
+import type { Product } from '../types/Product'
 
-// Type
-interface Product {
-  id: number
-  name: string
-  price: number
-  image: string
-}
-
-// Props
-const props = defineProps<{
+defineProps<{
   product: Product
   isOpen: boolean
 }>()
 
-// Emits
-const emit = defineEmits(['close'])
-
-// Store
-const cart = useCartStore()
-
-// Add to cart
-function addToCart() {
-  cart.addToCart(props.product)
-}
-
-// Close modal
-function close() {
-  emit('close')
-}
+defineEmits(['close', 'add-to-cart'])
 </script>
