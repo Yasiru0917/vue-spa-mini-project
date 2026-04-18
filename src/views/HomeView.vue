@@ -1,42 +1,73 @@
 <template>
-  <div
-    class="max-w-6xl mx-auto mt-10 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-  >
-    <div
-      v-for="product in products"
-      :key="product.id"
-      class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex flex-col items-center transform hover:scale-105 transition duration-200"
-    >
-      <!-- Image -->
-      <img
-        :src="product.image"
-        :alt="product.name"
-        class="w-32 h-32 object-contain mb-4"
-      />
+  <div class="min-h-screen bg-[#F7F9FC] dark:bg-[#0F172A] pb-10">
 
-      <!-- Name -->
-      <h2 class="text-lg font-semibold mb-2 text-center">
-        {{ product.name }}
-      </h2>
+    <!-- Search -->
+    <SearchBar @search="handleSearch" />
 
-      <!-- Price -->
-      <p class="text-gray-700 dark:text-gray-300 mb-4">
-        LKR {{ product.price.toLocaleString() }}
-      </p>
-
-      <!-- Button -->
-      <button
-        @click="addToCart(product)"
-        class="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition"
-      >
-        Add to Cart
-      </button>
+    <!-- No Results -->
+    <div v-if="filteredProducts.length === 0"
+         class="text-center text-gray-500 dark:text-gray-400 mt-10">
+      No products found for
+      "<span class="font-semibold text-gray-800 dark:text-white">
+        {{ searchQuery }}
+      </span>"
     </div>
+
+    <!-- Product Grid -->
+    <div v-else
+         class="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+      <!-- Product Card -->
+      <div
+        v-for="product in filteredProducts"
+        :key="product.id"
+        @click="openModal(product)"
+        class="cursor-pointer bg-[#E9EEF5] dark:bg-gray-900
+               border border-[#E9EEF5] dark:border-gray-800
+               rounded-xl p-4 hover:-translate-y-1 transition"
+      >
+
+        <img :src="product.image"
+             class="w-32 h-32 mx-auto object-contain mb-4"/>
+
+        <h2 class="text-center font-semibold text-gray-800 dark:text-white">
+          {{ product.name }}
+        </h2>
+
+        <p class="text-center text-gray-600 dark:text-gray-300">
+          LKR {{ product.price.toLocaleString() }}
+        </p>
+
+        <!-- Add to Cart -->
+        <button
+          @click.stop="addToCart(product)"
+          class="mt-4 w-full py-2 rounded-lg
+                 bg-[#81A6C6] text-white
+                 hover:bg-[#AACDDC]"
+        >
+          Add to Cart
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ✅ PRODUCT MODAL -->
+    <ProductModal
+      v-if="selectedProduct"
+      :product="selectedProduct"
+      :isOpen="isModalOpen"
+      @close="closeModal"
+    />
+
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import { useCartStore } from '../store/cartStore'
+import SearchBar from '../components/SearchBar.vue'
+import ProductModal from '../components/ProductModal.vue'
 
 // Images
 import iPhone17ProMax from '../assets/17 pro max.jpg'
@@ -60,27 +91,63 @@ interface Product {
   image: string
 }
 
-// ✅ Pinia store
+// Store
 const cart = useCartStore()
 
-// ✅ Add to cart function
-function addToCart(product: Product) {
-  cart.addToCart(product)
+// Search
+const searchQuery = ref('')
+let timeout: ReturnType<typeof setTimeout> | null = null
+
+function handleSearch(value: string) {
+  if (timeout) clearTimeout(timeout)
+
+  timeout = setTimeout(() => {
+    searchQuery.value = value
+  }, 250)
 }
 
-// Product list
+// Modal state
+const selectedProduct = ref<Product | null>(null)
+const isModalOpen = ref(false)
+
+function openModal(product: Product) {
+  selectedProduct.value = product
+  isModalOpen.value = true
+}
+
+function closeModal() {
+  isModalOpen.value = false
+}
+
+// Products
 const products: Product[] = [
   { id: 1, name: 'iPhone 17 Pro Max', price: 650000, image: iPhone17ProMax },
   { id: 2, name: 'iPhone 17 Pro', price: 590000, image: iPhone17Pro },
   { id: 3, name: 'iPhone 17', price: 520000, image: iPhone17 },
+
   { id: 4, name: 'iPhone 16 Pro Max', price: 540000, image: iPhone16ProMax },
   { id: 5, name: 'iPhone 16 Pro', price: 480000, image: iPhone16Pro },
   { id: 6, name: 'iPhone 16', price: 410000, image: iPhone16 },
+
   { id: 7, name: 'iPhone 15 Pro Max', price: 437635, image: iPhone15ProMax },
   { id: 8, name: 'iPhone 15 Pro', price: 392635, image: iPhone15Pro },
   { id: 9, name: 'iPhone 15', price: 364635, image: iPhone15 },
+
   { id: 10, name: 'iPhone 14 Pro Max', price: 328135, image: iPhone14ProMax },
   { id: 11, name: 'iPhone 14', price: 265135, image: iPhone14 },
+
   { id: 12, name: 'iPhone 13 Pro Max', price: 280000, image: iPhone13ProMax },
 ]
+
+// Filter
+const filteredProducts = computed(() => {
+  return products.filter(p =>
+    p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+})
+
+// Cart
+function addToCart(product: Product) {
+  cart.addToCart(product)
+}
 </script>

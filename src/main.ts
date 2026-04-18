@@ -6,7 +6,7 @@ import './assets/style.css'
 
 const app = createApp(App)
 
-app.use(createPinia()) // 🔴 MUST HAVE
+app.use(createPinia()) 
 app.use(router)
 
 app.mount('#app')

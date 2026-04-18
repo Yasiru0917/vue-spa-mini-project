@@ -1,28 +1,31 @@
 import { defineStore } from 'pinia'
+import { ref, computed, watch } from 'vue'
 
-export const useCartStore = defineStore('cart', {
-  state: () => ({
-    items: [] as any[],
-  }),
+export const useCartStore = defineStore('cart', () => {
 
-  actions: {
-    addToCart(product: any) {
-      this.items.push(product)
-      console.log('Added:', product) // 🔥 debug
-    },
+  const saved = localStorage.getItem('cartItems')
 
-    removeFromCart(id: number) {
-      this.items = this.items.filter(p => p.id !== id)
-    },
+  const cartItems = ref<any[]>(saved ? JSON.parse(saved) : [])
 
-    clearCart() {
-      this.items = []
-    },
-  },
+  function addToCart(product: any) {
+    cartItems.value.push(product)
+  }
 
-  getters: {
-    itemCount: (state) => state.items.length,
-    totalPrice: (state) =>
-      state.items.reduce((sum, item) => sum + item.price, 0),
-  },
+  function removeFromCart(index: number) {
+    cartItems.value.splice(index, 1)
+  }
+
+  const itemCount = computed(() => cartItems.value.length)
+
+  // 🔥 PERSIST CART AUTOMATICALLY
+  watch(cartItems, (newCart) => {
+    localStorage.setItem('cartItems', JSON.stringify(newCart))
+  }, { deep: true })
+
+  return {
+    cartItems,
+    addToCart,
+    removeFromCart,
+    itemCount
+  }
 })
