@@ -4,6 +4,9 @@
     <!-- Search -->
     <SearchBar @search="handleSearch" />
 
+    <!-- Filters -->
+    <FilterBar @filter="handleFilter" />
+
     <!-- No Results -->
     <div v-if="filteredProducts.length === 0"
          class="text-center text-gray-500 dark:text-gray-400 mt-10">
@@ -19,40 +22,64 @@
 
       <!-- Product Card -->
       <div
-        v-for="product in filteredProducts"
-        :key="product.id"
-        @click="openModal(product)"
-        class="cursor-pointer bg-[#E9EEF5] dark:bg-gray-900
-               border border-[#E9EEF5] dark:border-gray-800
-               rounded-xl p-4 hover:-translate-y-1 transition"
-      >
+  v-for="product in filteredProducts"
+  :key="product.id"
+  @click="openModal(product)"
+  class="group cursor-pointer bg-white/70 dark:bg-gray-900/70
+         backdrop-blur-md border border-gray-200 dark:border-gray-800
+         rounded-2xl p-4 transition duration-300
+         hover:-translate-y-2 hover:shadow-xl"
+>
 
-        <img :src="product.image"
-             class="w-32 h-32 mx-auto object-contain mb-4"/>
+  <!-- IMAGE -->
+  <div class="flex justify-center">
+    <img
+      :src="product.image"
+      class="w-32 h-32 object-contain
+             group-hover:scale-110 transition duration-300"
+    />
+  </div>
 
-        <h2 class="text-center font-semibold text-gray-800 dark:text-white">
-          {{ product.name }}
-        </h2>
+  <!-- NAME -->
+  <h2 class="text-center font-semibold text-gray-800 dark:text-white mt-3">
+    {{ product.name }}
+  </h2>
 
-        <p class="text-center text-gray-600 dark:text-gray-300">
-          LKR {{ product.price.toLocaleString() }}
-        </p>
+  <!-- PRICE -->
+  <p class="text-center text-gray-500 dark:text-gray-300 mt-1">
+    LKR {{ product.price.toLocaleString() }}
+  </p>
 
-        <!-- Add to Cart -->
-        <button
-          @click.stop="addToCart(product)"
-          class="mt-4 w-full py-2 rounded-lg
-                 bg-[#81A6C6] text-white
-                 hover:bg-[#AACDDC]"
-        >
-          Add to Cart
-        </button>
+  <!-- BUTTONS -->
+  <div class="mt-4 space-y-2">
 
-      </div>
+    <button
+      @click.stop="addToCart(product)"
+      class="w-full py-2 rounded-xl
+             bg-[#81A6C6] text-white
+             hover:bg-[#6f97b8]
+             transition"
+    >
+      Add to Cart
+    </button>
 
+    <button
+      @click.stop="openModal(product)"
+      class="w-full py-2 rounded-xl
+             bg-gray-200 dark:bg-gray-800
+             text-gray-700 dark:text-white
+             hover:bg-gray-300 dark:hover:bg-gray-700
+             transition"
+    >
+      View Details
+    </button>
+
+  </div>
+
+</div>
     </div>
 
-    <!-- ✅ PRODUCT MODAL -->
+    <!-- Product Modal -->
     <ProductModal
       v-if="selectedProduct"
       :product="selectedProduct"
@@ -66,8 +93,12 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useCartStore } from '../store/cartStore'
+import type { Product } from '../types/Product'
+
 import SearchBar from '../components/SearchBar.vue'
+import FilterBar from '../components/FilterBar.vue'
 import ProductModal from '../components/ProductModal.vue'
+import { products } from '../services/api'
 
 // Images
 import iPhone17ProMax from '../assets/17 pro max.jpg'
@@ -83,13 +114,7 @@ import iPhone14ProMax from '../assets/14 pro max.jpg'
 import iPhone14 from '../assets/14.jpg'
 import iPhone13ProMax from '../assets/13promax.jpg'
 
-// Type
-interface Product {
-  id: number
-  name: string
-  price: number
-  image: string
-}
+
 
 // Store
 const cart = useCartStore()
@@ -106,7 +131,17 @@ function handleSearch(value: string) {
   }, 250)
 }
 
-// Modal state
+// Filters
+const selectedFilters = ref({
+  model: '',
+  price: ''
+})
+
+function handleFilter(filters: any) {
+  selectedFilters.value = filters
+}
+
+// Modal
 const selectedProduct = ref<Product | null>(null)
 const isModalOpen = ref(false)
 
@@ -119,33 +154,33 @@ function closeModal() {
   isModalOpen.value = false
 }
 
-// Products
-const products: Product[] = [
-  { id: 1, name: 'iPhone 17 Pro Max', price: 650000, image: iPhone17ProMax },
-  { id: 2, name: 'iPhone 17 Pro', price: 590000, image: iPhone17Pro },
-  { id: 3, name: 'iPhone 17', price: 520000, image: iPhone17 },
 
-  { id: 4, name: 'iPhone 16 Pro Max', price: 540000, image: iPhone16ProMax },
-  { id: 5, name: 'iPhone 16 Pro', price: 480000, image: iPhone16Pro },
-  { id: 6, name: 'iPhone 16', price: 410000, image: iPhone16 },
 
-  { id: 7, name: 'iPhone 15 Pro Max', price: 437635, image: iPhone15ProMax },
-  { id: 8, name: 'iPhone 15 Pro', price: 392635, image: iPhone15Pro },
-  { id: 9, name: 'iPhone 15', price: 364635, image: iPhone15 },
-
-  { id: 10, name: 'iPhone 14 Pro Max', price: 328135, image: iPhone14ProMax },
-  { id: 11, name: 'iPhone 14', price: 265135, image: iPhone14 },
-
-  { id: 12, name: 'iPhone 13 Pro Max', price: 280000, image: iPhone13ProMax },
-]
-
-// Filter
+// FILTER LOGIC (FIXED)
 const filteredProducts = computed(() => {
-  return products.filter(p =>
-    p.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
-})
+  return products.filter(p => {
 
+    const matchesSearch = p.name
+      .toLowerCase()
+      .includes(searchQuery.value.toLowerCase())
+
+    const matchesModel = selectedFilters.value.model
+      ? p.name.toLowerCase().includes(selectedFilters.value.model)
+      : true
+
+    let matchesPrice = true
+
+    if (selectedFilters.value.price === 'low') {
+      matchesPrice = p.price < 300000
+    } else if (selectedFilters.value.price === 'mid') {
+      matchesPrice = p.price >= 300000 && p.price <= 500000
+    } else if (selectedFilters.value.price === 'high') {
+      matchesPrice = p.price > 500000
+    }
+
+    return matchesSearch && matchesModel && matchesPrice
+  })
+})
 // Cart
 function addToCart(product: Product) {
   cart.addToCart(product)
