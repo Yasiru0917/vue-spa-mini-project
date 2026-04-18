@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-6xl mx-auto px-4 mb-6">
 
-    <!-- FILTER BUTTON -->
+
     <button
       @click="isOpen = !isOpen"
       class="px-5 py-2 rounded-xl
@@ -12,7 +12,7 @@
       {{ isOpen ? 'Hide Filters' : '☷ Show Filters' }}
     </button>
 
-    <!-- FILTER BOX -->
+    
     <div v-if="isOpen"
          class="mt-4 p-5 rounded-2xl
                 bg-white/70 dark:bg-gray-900/70
@@ -20,7 +20,7 @@
                 border border-gray-200 dark:border-gray-800
                 shadow-md">
 
-      <!-- MODEL -->
+      
       <div class="mb-4">
         <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
           Model
@@ -41,7 +41,7 @@
         </div>
       </div>
 
-      <!-- PRICE -->
+    
       <div class="mb-4">
         <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
           Price
@@ -62,7 +62,7 @@
         </div>
       </div>
 
-      <!-- ACTIONS -->
+      
       <div class="flex justify-end">
         <button
           @click="clearFilters"

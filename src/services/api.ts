@@ -231,13 +231,7 @@ export const products = [
   }
 ]
 
-// ============================
-// 📦 API FUNCTIONS
-// ============================
 
-/**
- * Get all products (simulate API call)
- */
 export function getProducts(): Promise<Product[]> {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -246,9 +240,7 @@ export function getProducts(): Promise<Product[]> {
   })
 }
 
-/**
- * Get product by ID
- */
+
 export function getProductById(id: number): Promise<Product | undefined> {
   return new Promise((resolve) => {
     setTimeout(() => {

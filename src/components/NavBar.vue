@@ -9,13 +9,13 @@
 
     <div class="max-w-7xl mx-auto flex items-center justify-between px-8 py-5">
 
-      <!-- LEFT -->
+      
       <div class="flex items-center cursor-pointer" @click="router.push('/')">
 
-        <!-- LOGO -->
+        
         <img src="@/assets/logo.svg" class="h-11 w-11 mr-4" />
 
-        <!-- TITLE -->
+      
         <div class="flex flex-col leading-tight">
           <h1 class="text-3xl font-bold text-gray-800 dark:text-white">
             <span class="text-[#81A6C6]">i</span>Wave
@@ -29,10 +29,10 @@
       </div>
       
 
-      <!-- RIGHT -->
+      
       <div class="flex items-center space-x-4">
 
-        <!-- LOGIN -->
+        
         <button
   v-if="!auth.isLoggedIn"
   @click="goToLogin"
@@ -49,7 +49,7 @@
   Logout
 </button>
 
-        <!-- CART -->
+        
         <button
           @click="emit('open-cart')"
           class="relative p-3 rounded-lg
@@ -68,7 +68,7 @@
           </span>
         </button>
 
-        <!-- THEME TOGGLE -->
+      
         <button
           @click="toggleTheme"
           class="p-3 rounded-lg
@@ -109,6 +109,7 @@ const theme = ref(localStorage.getItem('theme') || 'light')
 
 function goToLogin() {
   router.push('/login')
+  
 }
 
 function toggleTheme() {

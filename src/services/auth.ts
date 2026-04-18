@@ -7,8 +7,7 @@ export async function loginUser(username: string, password: string) {
     body: JSON.stringify({
       username,
       password,
-      // ❌ REMOVE this if causing issue in your environment
-      // expiresInMins: 60
+     
     }),
   })
 
