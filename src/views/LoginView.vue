@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-[#F7F9FC] dark:bg-[#0F172A]">
 
-    <div class="w-96 p-6 rounded-xl bg-white dark:bg-gray-900 shadow-lg">
+    <div class="w-96 p-6 rounded-xl bg-white dark:bg-[#263452] shadow-lg">
 
       <h1 class="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
         Login
