@@ -1,13 +1,14 @@
 export interface Product {
   id: number
-  name: string
+  title: string
+  description: string
   price: number
-  image: string
+  thumbnail: string
+  images: string[]
 
-  highlights?: string[]
-  camera?: string
-  performance?: string
-  battery?: string
-  design?: string
-  colors?: string[]
+  category: string
+  brand: string
+
+  rating: number
+  stock: number
 }

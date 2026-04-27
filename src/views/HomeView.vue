@@ -22,90 +22,105 @@
 
       <!-- Product Card -->
       <div
-  v-for="product in filteredProducts"
-  :key="product.id"
-  @click="openModal(product)"
-  class="group cursor-pointer bg-white/70 dark:bg-gray-900/70
-         backdrop-blur-md border border-gray-200 dark:border-gray-800
-         rounded-2xl p-4 transition duration-300
-         hover:-translate-y-2 hover:shadow-xl"
->
+        v-for="product in filteredProducts"
+        :key="product.id"
+        @click="openModal(product)"
+        class="group cursor-pointer bg-white/70 dark:bg-gray-900/70
+               backdrop-blur-md border border-gray-200 dark:border-gray-800
+               rounded-2xl p-4 transition duration-300
+               hover:-translate-y-2 hover:shadow-xl"
+      >
 
-  <!-- IMAGE -->
-  <div class="flex justify-center">
-    <img
-      :src="product.image"
-      class="w-32 h-32 object-contain
-             group-hover:scale-110 transition duration-300"
-    />
-  </div>
+        <!-- IMAGE -->
+        <div class="flex justify-center">
+          <img
+            :src="product.thumbnail"
+            class="w-32 h-32 object-contain
+                   group-hover:scale-110 transition duration-300"
+          />
+        </div>
 
-  <!-- NAME -->
-  <h2 class="text-center font-semibold text-gray-800 dark:text-white mt-3">
-    {{ product.name }}
-  </h2>
+        <!-- TITLE -->
+        <h2 class="text-center font-semibold text-gray-800 dark:text-white mt-3">
+          {{ product.title }}
+        </h2>
 
-  <!-- PRICE -->
-  <p class="text-center text-gray-500 dark:text-gray-300 mt-1">
-    LKR {{ product.price.toLocaleString() }}
-  </p>
+        <!-- BRAND -->
+        <p class="text-center text-xs text-gray-400">
+          {{ product.brand }}
+        </p>
 
-  <!-- BUTTONS -->
-  <div class="mt-4 space-y-2">
+        <!-- PRICE -->
+        <p class="text-center text-gray-500 dark:text-gray-300 mt-1">
+          $ {{ product.price }}
+        </p>
 
-    <button
-      @click.stop="addToCart(product)"
-      class="w-full py-2 rounded-xl
-             bg-[#81A6C6] text-white
-             hover:bg-[#6f97b8]
-             transition"
-    >
-      Add to Cart
-    </button>
+        <!-- BUTTONS -->
+        <div class="mt-4 space-y-2">
 
-    <button
-      @click.stop="openModal(product)"
-      class="w-full py-2 rounded-xl
-             bg-gray-200 dark:bg-gray-800
-             text-gray-700 dark:text-white
-             hover:bg-gray-300 dark:hover:bg-gray-700
-             transition"
-    >
-      View Details
-    </button>
+          <button
+            @click.stop="addToCart(product)"
+            class="w-full py-2 rounded-xl
+                   bg-[#81A6C6] text-white
+                   hover:bg-[#6f97b8]
+                   transition"
+          >
+            Add to Cart
+          </button>
 
-  </div>
+          <button
+            @click.stop="openModal(product)"
+            class="w-full py-2 rounded-xl
+                   bg-gray-200 dark:bg-gray-800
+                   text-gray-700 dark:text-white
+                   hover:bg-gray-300 dark:hover:bg-gray-700
+                   transition"
+          >
+            View Details
+          </button>
 
-</div>
+        </div>
+
+      </div>
     </div>
 
     <!-- Product Modal -->
     <ProductModal
-      v-if="selectedProduct"
-      :product="selectedProduct"
-      :isOpen="isModalOpen"
-      @close="closeModal"
-    />
+  v-if="selectedProduct"
+  :product="selectedProduct"
+  :isOpen="isModalOpen"
+  @close="closeModal"
+  @add-to-cart="addToCart"
+/>
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useCartStore } from '../store/cartStore'
 import type { Product } from '../types/Product'
 
 import SearchBar from '../components/SearchBar.vue'
 import FilterBar from '../components/FilterBar.vue'
 import ProductModal from '../components/ProductModal.vue'
-import { products } from '../services/api'
-
-
-
-
+import { fetchProducts } from '../services/api'
 
 // Store
 const cart = useCartStore()
+
+// Products
+const products = ref<Product[]>([])
+
+// Fetch API
+onMounted(async () => {
+  try {
+    const data = await fetchProducts()
+    products.value = data
+  } catch (error) {
+    console.error(error)
+  }
+})
 
 // Search
 const searchQuery = ref('')
@@ -113,15 +128,14 @@ let timeout: ReturnType<typeof setTimeout> | null = null
 
 function handleSearch(value: string) {
   if (timeout) clearTimeout(timeout)
-
   timeout = setTimeout(() => {
     searchQuery.value = value
   }, 250)
 }
 
-// Filters
+// Filters (UPDATED)
 const selectedFilters = ref({
-  model: '',
+  category: '',
   price: ''
 })
 
@@ -142,33 +156,32 @@ function closeModal() {
   isModalOpen.value = false
 }
 
-
-
-// FILTER LOGIC (FIXED)
+// FILTER LOGIC (UPDATED)
 const filteredProducts = computed(() => {
-  return products.filter(p => {
+  return products.value.filter(p => {
 
-    const matchesSearch = p.name
+    const matchesSearch = p.title
       .toLowerCase()
       .includes(searchQuery.value.toLowerCase())
 
-    const matchesModel = selectedFilters.value.model
-      ? p.name.toLowerCase().includes(selectedFilters.value.model)
+    const matchesCategory = selectedFilters.value.category
+      ? p.category === selectedFilters.value.category
       : true
 
     let matchesPrice = true
 
     if (selectedFilters.value.price === 'low') {
-      matchesPrice = p.price < 300000
+      matchesPrice = p.price < 300
     } else if (selectedFilters.value.price === 'mid') {
-      matchesPrice = p.price >= 300000 && p.price <= 500000
+      matchesPrice = p.price >= 300 && p.price <= 700
     } else if (selectedFilters.value.price === 'high') {
-      matchesPrice = p.price > 500000
+      matchesPrice = p.price > 700
     }
 
-    return matchesSearch && matchesModel && matchesPrice
+    return matchesSearch && matchesCategory && matchesPrice
   })
 })
+
 // Cart
 function addToCart(product: Product) {
   cart.addToCart(product)

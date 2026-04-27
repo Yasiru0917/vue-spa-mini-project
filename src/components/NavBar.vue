@@ -18,11 +18,11 @@
       
         <div class="flex flex-col leading-tight">
           <h1 class="text-3xl font-bold text-gray-800 dark:text-white">
-            <span class="text-[#81A6C6]">i</span>Wave
+            <span class="text-[#81A6C6]">W</span>avix
           </h1>
 
           <p class="text-xs text-gray-500 dark:text-gray-400">
-            Your iPhone. Your Wave.
+            Shop Smarter. Live Better.
           </p>
         </div>
 
@@ -34,12 +34,12 @@
 
         
         <button
-  v-if="!auth.isLoggedIn"
-  @click="goToLogin"
-  class="px-5 py-2.5 text-sm rounded-lg bg-[#81A6C6] text-white"
->
-  Login
-</button>
+            v-if="!auth.isLoggedIn"
+            @click="goToLogin"
+            class="px-5 py-2.5 text-sm rounded-lg bg-[#81A6C6] text-white"
+          >
+          Login
+        </button>
 
 <button
   v-else

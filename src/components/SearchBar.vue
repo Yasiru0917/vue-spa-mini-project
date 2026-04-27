@@ -2,7 +2,7 @@
   <input
     v-model="searchText"
     type="text"
-    placeholder="🔎︎  Search Your iPhone..."
+    placeholder="🔎︎  Search Products…"
     class="w-full max-w-md mx-auto block my-6 px-4 py-2 rounded-lg
            bg-[#E9EEF5] dark:bg-gray-800
            text-gray-800 dark:text-white
