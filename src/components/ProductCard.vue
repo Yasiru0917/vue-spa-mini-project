@@ -4,21 +4,21 @@
   >
     <!-- Product Image -->
     <img
-      :src="product.image"
-      :alt="product.name"
+      :src="product.thumbnail"
+      :alt="product.title"
       class="w-32 h-32 object-contain mb-4"
     />
 
-    <!-- Product Name -->
+    <!-- Product Title -->
     <h2
       class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 text-center"
     >
-      {{ product.name }}
+      {{ product.title }}
     </h2>
 
     <!-- Product Price -->
     <p class="text-gray-700 dark:text-gray-300 mb-4">
-      LKR {{ product.price.toLocaleString() }}
+      $ {{ product.price }}
     </p>
 
     <!-- Add to Cart Button -->
@@ -33,21 +33,15 @@
 
 <script setup lang="ts">
 import { useCartStore } from '../store/cartStore'
+import type { Product } from '../types/Product'
 
-// Props (IMPORTANT)
+// ✅ Use correct Product type
 const props = defineProps<{
-  product: {
-    id: number
-    name: string
-    price: number
-    image: string
-  }
+  product: Product
 }>()
 
-// Cart store
 const cart = useCartStore()
 
-// Add to cart function
 function addToCart() {
   cart.addToCart(props.product)
 }

@@ -1,13 +1,13 @@
 <template>
   <div class="min-h-screen bg-[#F7F9FC] dark:bg-[#0F172A] pb-10">
 
-    <!-- Search -->
+    
     <SearchBar @search="handleSearch" />
 
-    <!-- Filters -->
+    
     <FilterBar @filter="handleFilter" />
 
-    <!-- No Results -->
+    
     <div v-if="filteredProducts.length === 0"
          class="text-center text-gray-500 dark:text-gray-400 mt-10">
       No products found for
@@ -16,22 +16,22 @@
       </span>"
     </div>
 
-    <!-- Product Grid -->
+    
     <div v-else
          class="max-w-6xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
-      <!-- Product Card -->
+      
       <div
         v-for="product in filteredProducts"
         :key="product.id"
-        @click="openModal(product)"
+        @click="goToProduct(product)"
         class="group cursor-pointer bg-white/70 dark:bg-gray-900/70
                backdrop-blur-md border border-gray-200 dark:border-gray-800
                rounded-2xl p-4 transition duration-300
                hover:-translate-y-2 hover:shadow-xl"
       >
 
-        <!-- IMAGE -->
+      
         <div class="flex justify-center">
           <img
             :src="product.thumbnail"
@@ -40,24 +40,25 @@
           />
         </div>
 
-        <!-- TITLE -->
+    
         <h2 class="text-center font-semibold text-gray-800 dark:text-white mt-3">
           {{ product.title }}
         </h2>
 
-        <!-- BRAND -->
+      
         <p class="text-center text-xs text-gray-400">
           {{ product.brand }}
         </p>
 
-        <!-- PRICE -->
+        
         <p class="text-center text-gray-500 dark:text-gray-300 mt-1">
           $ {{ product.price }}
         </p>
 
-        <!-- BUTTONS -->
+        
         <div class="mt-4 space-y-2">
 
+        
           <button
             @click.stop="addToCart(product)"
             class="w-full py-2 rounded-xl
@@ -68,6 +69,7 @@
             Add to Cart
           </button>
 
+          
           <button
             @click.stop="openModal(product)"
             class="w-full py-2 rounded-xl
@@ -84,14 +86,14 @@
       </div>
     </div>
 
-    <!-- Product Modal -->
+
     <ProductModal
-  v-if="selectedProduct"
-  :product="selectedProduct"
-  :isOpen="isModalOpen"
-  @close="closeModal"
-  @add-to-cart="addToCart"
-/>
+      v-if="selectedProduct"
+      :product="selectedProduct"
+      :isOpen="isModalOpen"
+      @close="closeModal"
+      @add-to-cart="addToCart"
+    />
 
   </div>
 </template>
@@ -105,14 +107,18 @@ import SearchBar from '../components/SearchBar.vue'
 import FilterBar from '../components/FilterBar.vue'
 import ProductModal from '../components/ProductModal.vue'
 import { fetchProducts } from '../services/api'
+import { useRouter } from 'vue-router'
 
-// Store
+
 const cart = useCartStore()
 
-// Products
+
+const router = useRouter()
+
+
 const products = ref<Product[]>([])
 
-// Fetch API
+
 onMounted(async () => {
   try {
     const data = await fetchProducts()
@@ -122,7 +128,7 @@ onMounted(async () => {
   }
 })
 
-// Search
+
 const searchQuery = ref('')
 let timeout: ReturnType<typeof setTimeout> | null = null
 
@@ -133,7 +139,7 @@ function handleSearch(value: string) {
   }, 250)
 }
 
-// Filters (UPDATED)
+
 const selectedFilters = ref({
   category: '',
   price: ''
@@ -143,7 +149,12 @@ function handleFilter(filters: any) {
   selectedFilters.value = filters
 }
 
-// Modal
+
+function goToProduct(product: Product) {
+  router.push(`/product/${product.id}`)
+}
+
+
 const selectedProduct = ref<Product | null>(null)
 const isModalOpen = ref(false)
 
@@ -156,7 +167,7 @@ function closeModal() {
   isModalOpen.value = false
 }
 
-// FILTER LOGIC (UPDATED)
+
 const filteredProducts = computed(() => {
   return products.value.filter(p => {
 
@@ -182,7 +193,7 @@ const filteredProducts = computed(() => {
   })
 })
 
-// Cart
+
 function addToCart(product: Product) {
   cart.addToCart(product)
 }

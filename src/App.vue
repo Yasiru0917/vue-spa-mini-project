@@ -1,8 +1,17 @@
 <template>
   <div class="min-h-screen bg-[#F7F9FC] dark:bg-[#0F172A] transition">
+
+    <!-- Navbar -->
     <NavBar @open-cart="openCart" />
-    <router-view />
+
+    <!-- Page Content -->
+    <main class="pt-[72px]">
+      <router-view />
+    </main>
+
+    <!-- Cart Drawer -->
     <CartDrawer :isOpen="isCartOpen" @close="closeCart" />
+
   </div>
 </template>
 

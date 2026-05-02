@@ -12,23 +12,7 @@
       ⚙️ Filters
     </button>
 
-    <!-- ACTIVE FILTERS DISPLAY -->
-    <div v-if="selectedCategory || selectedPrice"
-         class="mt-3 text-sm text-gray-600 dark:text-gray-300 flex flex-wrap gap-2">
-
-      <span class="font-semibold">Active:</span>
-
-      <span v-if="selectedCategory"
-            class="px-2 py-1 bg-[#81A6C6] text-white rounded">
-        {{ selectedCategory }}
-      </span>
-
-      <span v-if="selectedPrice"
-            class="px-2 py-1 bg-[#81A6C6] text-white rounded">
-        {{ priceLabel }}
-      </span>
-
-    </div>
+    
 
     <!-- FILTER BOX -->
     <div v-if="isOpen"
