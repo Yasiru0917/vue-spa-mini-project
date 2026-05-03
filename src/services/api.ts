@@ -1,7 +1,16 @@
-export async function fetchProducts() {
-  const categories = ['smartphones', 'laptops', 'tablets','mobile-accessories' ,'mens-watches' , 'womens-watches' ]
+import type { Product } from '../types/Product'
 
-  let allProducts: any[] = []
+export async function fetchProducts(): Promise<Product[]> {
+  const categories = [
+    'smartphones',
+    'laptops',
+    'tablets',
+    'mobile-accessories',
+    'mens-watches',
+    'womens-watches'
+  ]
+
+  let allProducts: Product[] = []
 
   for (const category of categories) {
     const res = await fetch(`https://dummyjson.com/products/category/${category}`)

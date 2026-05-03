@@ -3,12 +3,12 @@
 
     <div v-if="product" class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
 
-      <!-- IMAGE -->
+     
       <div class="flex justify-center items-center">
         <img :src="product.thumbnail" class="w-80 object-contain" />
       </div>
 
-      <!-- DETAILS -->
+     
       <div>
 
         <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
@@ -40,7 +40,7 @@
 
     </div>
 
-    <!-- LOADING -->
+    
     <div v-else class="text-center mt-20 text-gray-500">
       Loading product...
     </div>
@@ -56,7 +56,9 @@ import { useCartStore } from '../store/cartStore'
 const route = useRoute()
 const cart = useCartStore()
 
-const product = ref<any>(null)
+import type { Product } from '../types/Product'
+
+const product = ref<Product | null>(null)
 
 onMounted(async () => {
   const id = route.params.id
